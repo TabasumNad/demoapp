@@ -4,8 +4,8 @@ import { useEffect } from 'react';
 import { Routes, Route, Link, Navigate } from "react-router-dom";
 import { Home } from './Home';
 
-const API="https://node2-tabasumnad.vercel.app";
-// const API="http://localhost:4000";
+// export const API="https://node2-tabasumnad.vercel.app";
+export const API="http://localhost:4000";
 
 
 function App() {
@@ -39,15 +39,35 @@ return token ? (<section>
 </section>):(<Navigate replace to="/ "/>)
 }
 
+
+function checkAuth(res){
+  if(res.status===401){
+    throw Error("unauthorized");
+  }else{
+    return res.json();
+  }
+}
+
+function logout(){
+localStorage.clear();
+window.location.href="/";
+}
+
 // 2nd DAY FSD 1.LOGIN 2.Mobile
 
 function PhoneList(){
   const [mobileList, setMobilrList]=useState([]);
 
   useEffect(()=>{
-    fetch(`${API}/mobile`)
-    .then((res)=>res.json())
-    .then((data)=>setMobilrList(data));
+    fetch(`${API}/mobile`,
+    {
+      headers:{
+        "x-auth-token":localStorage.getItem("token"),
+      },
+    })
+    .then((res)=>checkAuth(res))
+    .then((data)=>setMobilrList(data))
+    .catch(err => logout());
   },[]);
 
   
