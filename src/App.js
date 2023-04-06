@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import './App.css';
 import { useEffect } from 'react';
+import { Routes, Route, Link, Navigate } from "react-router-dom";
+import { Home } from './Home';
 
 const API="https://node2-tabasumnad.vercel.app";
 // const API="http://localhost:4000";
@@ -10,12 +12,34 @@ function App() {
   return (
     <div className="App">
       {/* <Phone/> */}
-      <PhoneList/>
+
+      <Routes>
+      <Route path="/" element={<Home />} />
+        {/* <Route path="/" element={<Login />} /> */}
+        <Route path="/mobiles" element={
+        <ProtectedRoute>
+           <PhoneList/>
+        </ProtectedRoute>
+       } />
+      </Routes>
+
+
+  
       
       
     </div>
   );
 }
+
+function ProtectedRoute({children}){
+  const token=localStorage.getItem("token");
+return token ? (<section>
+  <h1>This is a protected Route</h1>
+  {children}
+</section>):(<Navigate replace to="/ "/>)
+}
+
+// 2nd DAY FSD 1.LOGIN 2.Mobile
 
 function PhoneList(){
   const [mobileList, setMobilrList]=useState([]);
